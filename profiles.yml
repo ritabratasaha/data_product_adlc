@@ -24,3 +24,14 @@ sales_data_product:
       schema: "public"
       threads: 4
       sslmode: require
+
+    supabase:
+      type: postgres
+      host: "db.tdnloyeyrgmxaceyaipl.supabase.co"
+      port: 5432
+      user: "developer"
+      password: "Developer!12345$$"
+      dbname: "postgres"
+      schema: "public"
+      threads: 4
+      sslmode: require
