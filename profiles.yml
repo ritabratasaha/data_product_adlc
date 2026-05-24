@@ -22,9 +22,9 @@ sales_data_product:
       threads: 4
     supabase:
       type: postgres
-      host: "2406:da18:e5c:b700:ecf7:34cd:55c3:5748"
-      port: 6543
-      user: "postgres"
+      host: "aws-1-ap-southeast-1.pooler.supabase.com"
+      port: 5432
+      user: "postgres.fizhqhsmhiusvmefoejo"
       password: 'Developer!12345$$'
       dbname: "postgres"
       schema: "public"

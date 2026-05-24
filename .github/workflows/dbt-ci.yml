@@ -13,10 +13,10 @@ concurrency:
 
 env:
   DBT_PROFILES_DIR: ${{ github.workspace }}
-  POSTGRES_HOST: "2406:da18:e5c:b700:ecf7:34cd:55c3:5748"
-  POSTGRES_PORT: "6543"
+  POSTGRES_HOST: "aws-1-ap-southeast-1.pooler.supabase.com"
+  POSTGRES_PORT: "5432"
   POSTGRES_DB: postgres
-  POSTGRES_USER: postgres
+  POSTGRES_USER: postgres.fizhqhsmhiusvmefoejo
   POSTGRES_PASSWORD: 'Developer!12345$$'
   POSTGRES_SSLMODE: require
 
