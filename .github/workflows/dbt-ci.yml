@@ -14,7 +14,7 @@ concurrency:
 env:
   DBT_PROFILES_DIR: ${{ github.workspace }}
   POSTGRES_HOST: db.fizhqhsmhiusvmefoejo.supabase.co
-  POSTGRES_PORT: "5432"
+  POSTGRES_PORT: "6543"
   POSTGRES_DB: postgres
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: 'Developer!12345$$'
