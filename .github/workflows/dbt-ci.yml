@@ -17,7 +17,7 @@ env:
   POSTGRES_PORT: "5432"
   POSTGRES_DB: postgres
   POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_PASSWORD: 'Developer!12345$$'
   POSTGRES_SSLMODE: require
 
 jobs:
