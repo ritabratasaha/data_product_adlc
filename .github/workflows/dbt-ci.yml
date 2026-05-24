@@ -13,6 +13,12 @@ concurrency:
 
 env:
   DBT_PROFILES_DIR: ${{ github.workspace }}
+  POSTGRES_HOST: db.fizhqhsmhiusvmefoejo.supabase.co
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_SSLMODE: require
 
 jobs:
   dbt:
@@ -32,6 +38,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Test Supabase PostgreSQL connection
+        run: python scripts/test_supabase_connection.py
 
       - name: dbt debug
         run: dbt debug --target supabase

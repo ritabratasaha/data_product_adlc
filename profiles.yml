@@ -1,8 +1,11 @@
 # Point dbt at this file: export DBT_PROFILES_DIR="$(pwd)"
 # Or merge this profile into ~/.dbt/profiles.yml
 #
-# Supabase remote: set your personal access token (sbp_...) before running dbt:
-#   export SUPABASE_ACCESS_TOKEN="sbp_..."
+# Supabase remote: set connection env vars before running dbt:
+#   export POSTGRES_HOST="db.<project-ref>.supabase.co"
+#   export POSTGRES_USER="postgres"
+#   export POSTGRES_PASSWORD="..."
+#   export POSTGRES_DB="postgres"
 #   dbt debug --target supabase
 
 sales_data_product:
@@ -22,7 +25,7 @@ sales_data_product:
       host: "db.fizhqhsmhiusvmefoejo.supabase.co"
       port: 5432
       user: "postgres"
-      password: "Developer!12345$$"
+      password: 'Developer!12345$$'
       dbname: "postgres"
       schema: "public"
       threads: 4
