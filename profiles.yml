@@ -23,7 +23,7 @@ sales_data_product:
     supabase:
       type: postgres
       host: "db.fizhqhsmhiusvmefoejo.supabase.co"
-      port: 5432
+      port: 6543
       user: "postgres"
       password: 'Developer!12345$$'
       dbname: "postgres"
