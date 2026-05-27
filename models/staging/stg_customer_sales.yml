@@ -1,0 +1,73 @@
+version: 2
+
+models:
+  - name: stg_customer_sales
+    description: "Staging model for customer sales transactions from seed data. Contains cleaned sales data with non-null order statuses."
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: sale_id
+        description: "Unique identifier for each sale transaction (primary key)"
+        data_type: text
+        tests:
+          - unique
+          - not_null
+
+      - name: sale_date
+        description: "Date when the sale transaction occurred"
+        data_type: date
+        tests:
+          - not_null
+
+      - name: customer_id
+        description: "Unique identifier for the customer who made the purchase"
+        data_type: text
+        tests:
+          - not_null
+
+      - name: product_sku
+        description: "Product Stock Keeping Unit identifier"
+        data_type: text
+        tests:
+          - not_null
+
+      - name: quantity
+        description: "Number of units purchased in this transaction"
+        data_type: integer
+        tests:
+          - not_null
+
+      - name: unit_price_usd
+        description: "Price per unit in US dollars"
+        data_type: numeric
+        tests:
+          - not_null
+
+      - name: discount_usd
+        description: "Total discount applied to this line item in US dollars"
+        data_type: numeric
+        tests:
+          - not_null
+
+      - name: line_total_usd
+        description: "Total amount for this line item in US dollars. Calculated as (quantity * unit_price_usd) - discount_usd"
+        data_type: numeric
+        tests:
+          - not_null
+
+      - name: sales_channel
+        description: "Channel through which the sale was made (e.g., Online, Retail Store, B2B Portal)"
+        data_type: text
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Online', 'Retail Store', 'B2B Portal']
+
+      - name: order_status
+        description: "Current status of the order (e.g., Completed, Shipped, Pending, Returned). Null values are filtered out in this model."
+        data_type: text
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Completed', 'Shipped', 'Pending', 'Returned']

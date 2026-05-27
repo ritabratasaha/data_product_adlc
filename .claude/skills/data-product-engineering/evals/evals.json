@@ -1,0 +1,162 @@
+{
+  "skill_name": "data_product_developer",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ref-vs-source-conventions",
+      "prompt": [
+        "Scan all .sql models under models/.",
+        "For each file:",
+        "(a) reads from other dbt models or seeds must use ref(), not hardcoded database.schema.table.",
+        "(b) reads from raw/external tables that belong in sources must use source(), not ref().",
+        "List each model: pass/fail, with quoted evidence (snippet or line).",
+        "If the project has no sources.yml yet, say so and still flag any raw SQL that should become source() once defined."
+      ],
+      "expected_output": [
+        "A short audit table (or bullet list) mapping each model to whether ref/source conventions are satisfied,",
+        "with explicit evidence per failure."
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "id": "states_ref_rule",
+          "text": "Review states that internal dbt models and seeds must be referenced with ref(), not bare warehouse identifiers."
+        },
+        {
+          "id": "states_source_rule",
+          "text": "Review states that external/raw warehouse tables (outside the dbt project graph) must use source() once declared in YAML, not ref()."
+        },
+        {
+          "id": "evidence_per_violation",
+          "text": "Any reported violation names the model file and includes concrete evidence (SQL snippet, pattern, or line-level pointer)."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "validate_data_product_yml",
+      "description": "Ensure the model has a defined schema contract",
+      "prompt": [
+        "Create a yml file for all the models in the right format: use dbt schema YAML (version 2)",
+        "so every model under models/ is listed with descriptions and columns where applicable.",
+        "Enable model contracts with enforced: true for models that expose a stable column set",
+        "(per dbt contract syntax for your dbt version)."
+      ],
+      "expected_output": [
+        "One or more valid schema YAML files covering each SQL model;",
+        "contract blocks include enforced: true where contracts apply."
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "id": "contains_enforced_true",
+          "type": "contains",
+          "value": "enforced: true",
+          "text": "YAML for models contains the literal 'enforced: true' (schema contract enforcement)."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "model-line-count-under-200",
+      "description": "Keep dbt models small and readable",
+      "prompt": [
+        "Scan every .sql file under models/.",
+        "Count the number of lines in each file (include blank lines and comments).",
+        "Each model must have strictly fewer than 200 lines.",
+        "List each model: pass/fail, line count, and path.",
+        "For any model at or above 200 lines, recommend how to split or simplify it."
+      ],
+      "expected_output": [
+        "A table or bullet list of every model under models/ with its line count and pass/fail status.",
+        "Failures name the file, exact line count, and why it exceeds the 200-line limit."
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "id": "states_200_line_limit",
+          "text": "Review states that each dbt model .sql file under models/ must have fewer than 200 lines."
+        },
+        {
+          "id": "max_lines_per_model",
+          "type": "max_lines",
+          "value": 200,
+          "text": "Every model .sql under models/ has strictly fewer than 200 lines."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "model-schema-yaml-pairing",
+      "description": "Every dbt model must have a schema YAML file in the same folder",
+      "prompt": [
+        "Scan every .sql file under models/.",
+        "For each model, check that a matching schema file exists in the same directory:",
+        "either <model_name>.yml or <model_name>.yaml (same basename as the .sql file).",
+        "Example: models/staging/stg_customer_sales.sql requires",
+        "models/staging/stg_customer_sales.yml or models/staging/stg_customer_sales.yaml.",
+        "List each model: pass/fail, and the expected schema file path."
+      ],
+      "expected_output": [
+        "A table or bullet list of every model under models/ with pass/fail status.",
+        "Failures name the .sql file and the missing .yml or .yaml path."
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "id": "states_yaml_pairing_rule",
+          "text": "Review states that every .sql model under models/ must have a matching .yml or .yaml file in the same folder with the same basename."
+        },
+        {
+          "id": "has_schema_yaml_per_model",
+          "type": "file_pair",
+          "extensions": [".yml", ".yaml"],
+          "text": "Every model .sql under models/ has a co-located .yml or .yaml file with the same basename."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "model-description-from-requirements",
+      "description": "Every model and macro must document its purpose aligned with the requirements .md file",
+      "prompt": [
+        "Scan every .sql file under models/ and macros/.",
+        "For each file, read the matching requirements doc:",
+        "docs/staging/<name>.md for models in models/staging/,",
+        "docs/marts/<name>.md for models in models/marts/,",
+        "docs/macros/<name>.md for files in macros/.",
+        "Check that the file has a description that explains its purpose (why it exists),",
+        "grounded in the requirements doc (especially the Overview section).",
+        "For models, the description should live in the co-located schema .yml/.yaml (models[].description)",
+        "For macros, the description should be in a leading SQL comment block at the top of the .sql file.",
+        "Reject descriptions that only repeat the file name or list columns without purpose.",
+        "List each file: pass/fail, where the description was found, and brief evidence."
+      ],
+      "expected_output": [
+        "A table or bullet list of every .sql file under models/ and macros/ with pass/fail status.",
+        "Passes quote the description and tie it to the requirements doc Overview (or equivalent).",
+        "Failures name the .sql file, the requirements doc path, and what is missing or inadequate."
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "id": "states_description_rule",
+          "text": "Review states that every .yml or .yaml file under models/ and every .sql macro under macros/ must have a purpose description derived from its requirements .md file under docs/staging/, docs/marts/, or docs/macros/."
+        },
+        {
+          "id": "reads_requirements_doc",
+          "text": "Review reads the paired docs/<layer>/<name>.md requirements file before judging the description."
+        },
+        {
+          "id": "rejects_name_only_descriptions",
+          "text": "Review flags descriptions that only restate the file name or column list without explaining purpose."
+        },
+        {
+          "id": "has_purpose_description_per_model",
+          "type": "model_description",
+          "text": "Every .yml or .yaml file under models/ and every .sql file under macros/ has a non-empty purpose description aligned with its requirements .md file."
+        }
+      ]
+    }
+  ]
+}

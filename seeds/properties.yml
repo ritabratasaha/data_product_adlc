@@ -1,0 +1,78 @@
+version: 2
+
+seeds:
+  - name: customer_sales
+    description: "Customer sales transactions seed data containing sale records with pricing, discounts, and order status"
+    config:
+      quote_columns: true
+      column_types:
+        sale_id: text
+        sale_date: date
+        customer_id: text
+        product_sku: text
+        quantity: integer
+        unit_price_usd: numeric
+        discount_usd: numeric
+        line_total_usd: numeric
+        sales_channel: text
+        order_status: text
+      delimiter: ','
+    columns:
+      - name: sale_id
+        description: "Unique identifier for each sale transaction"
+      - name: sale_date
+        description: "Date when the sale occurred"
+      - name: customer_id
+        description: "Unique identifier for the customer"
+      - name: product_sku
+        description: "Product Stock Keeping Unit identifier"
+      - name: quantity
+        description: "Number of units sold"
+      - name: unit_price_usd
+        description: "Price per unit in USD"
+      - name: discount_usd
+        description: "Discount applied to the transaction in USD"
+      - name: line_total_usd
+        description: "Total amount for the line item in USD"
+      - name: sales_channel
+        description: "Sales channel (Online, Retail Store, B2B Portal)"
+      - name: order_status
+        description: "Status of the order (Completed, Shipped, Pending, Returned)"
+
+  - name: products
+    description: "Product catalog seed data containing product information, pricing, and supplier details"
+    config:
+      quote_columns: true
+      column_types:
+        product_sku: text
+        product_name: text
+        category: text
+        subcategory: text
+        brand: text
+        list_price_usd: numeric
+        unit_of_measure: text
+        is_active: integer
+        supplier_id: text
+        product_launch_date: date
+      delimiter: ','
+    columns:
+      - name: product_sku
+        description: "Product Stock Keeping Unit identifier (primary key)"
+      - name: product_name
+        description: "Name of the product"
+      - name: category
+        description: "Product category (e.g., Electronics, Home & Kitchen, Apparel)"
+      - name: subcategory
+        description: "Product subcategory for more granular classification"
+      - name: brand
+        description: "Brand name of the product"
+      - name: list_price_usd
+        description: "List price of the product in USD"
+      - name: unit_of_measure
+        description: "Unit of measure (e.g., EA for Each)"
+      - name: is_active
+        description: "Flag indicating if product is active (1=active, 0=inactive)"
+      - name: supplier_id
+        description: "Unique identifier for the product supplier"
+      - name: product_launch_date
+        description: "Date when the product was launched"

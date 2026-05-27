@@ -1,10 +1,6 @@
-# data_product_adlc
-Sample data product developed with agentic development life cycle
-
-
 Welcome to your new dbt project!
 
-### Using the starter project
+### 4. What runs on `main`
 
 Try running the following commands:
 - dbt run
@@ -17,8 +13,3 @@ Try running the following commands:
 - Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
 - Find [dbt events](https://events.getdbt.com) near you
 - Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
-
-
-
-
-$$$$$$$$$

@@ -1,0 +1,6 @@
+product_sku,product_name,category,subcategory,brand,list_price_usd,unit_of_measure,is_active,supplier_id,product_launch_date
+SKU-ELEC-001,Wireless Bluetooth Earbuds,Electronics,Audio Accessories,SoundWave,59.99,EA,1,SUPP-01,2024-06-01
+SKU-HOME-014,Insulated Water Bottle 32oz,Home & Kitchen,Drinkware,HydroPeak,139.99,EA,1,SUPP-02,2024-03-15
+SKU-APRL-221,Organic Cotton T-Shirt,Apparel,Tops,GreenThread,29.99,EA,1,SUPP-03,2024-01-10
+SKU-FOOD-088,Artisan Granola Bar Pack,Grocery,Snacks,TrailBite,3.99,EA,1,SUPP-04,2023-11-20
+SKU-ELEC-042,15-inch Laptop Pro,Electronics,Computers,NovaTech,899.00,EA,1,SUPP-05,2024-09-01
