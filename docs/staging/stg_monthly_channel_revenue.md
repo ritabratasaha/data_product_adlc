@@ -44,14 +44,12 @@ Unique record for each sales_channel , year and month
 - The status of the order cannot be blank or null
 - line_total_usd = (quantity * unit_price_usd) - discount_usd
 
-## Example Use Cases
-
-## Example Query
 
 ## Create a mart view from this model ?
 
 Yes. Create a mart view in models/marts for this model. 
-This will be the presentation layer for the data product consumers
+This will be the presentation layer for the data product consumers.
+In this case you need to create a model.md file in docs/marts as well else the pytest will fail.
 
 
 

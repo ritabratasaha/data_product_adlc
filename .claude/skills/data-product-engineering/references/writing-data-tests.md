@@ -10,7 +10,7 @@ Write high-value tests that catch real data issues on low-signal checks. Testing
 - When tests or test scenarios are mentioned in **`models/docs/<layer>/<model>.md`**
 
 ## Understanding Data Quality
-
+Data quality rules are mentioned in the requirement file. Do not add anything additional. 
 
 ## Where Tests Belong in the Pipeline
 
@@ -19,6 +19,8 @@ Different layers need different tests. Don't duplicate tests for pass-through co
 ### Staging Models
 
 Catch data hygiene issues and basic anomalies. Identify key attributes from the requirement captured in **`models/docs/<layer>/<model>.md`** and apply the mentioned tests
+
+Sample tests :
 
 ```yaml
 models:
@@ -42,24 +44,11 @@ models:
                 values: ['pending', 'completed', 'cancelled']
 ```
 
-### Intermediate
-
-Test when grain changes or joins create new risks.
-
-```yaml
-models:
-  - name: int_orders_enriched
-    columns:
-      - name: order_customer_key
-        description: "Composite key created by join"
-        data_tests:
-          - unique
-          - not_null
-```
-
 ### Marts
 
 Protect end-user facing data. Test business expectations and new calculated fields.
+
+Sample tests only when the user mentions them in the requirement file
 
 ```yaml
 models:
@@ -71,3 +60,7 @@ models:
             expression: "total_amount >= 0 OR is_refund = true"
 
 ```
+
+### When not to use
+
+Do not use this skill when explicit tests or data quality checks are not mentioned in the requirement
