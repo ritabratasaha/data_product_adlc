@@ -43,4 +43,8 @@ Unique record for each sales_id
 
 ## Example Query
 
+## Create a mart view from this model ?
+
+Default -- No
+
 
