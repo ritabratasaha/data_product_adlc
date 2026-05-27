@@ -10,15 +10,25 @@ models:
       - name: sales_channel
         description: "Channel through which sales were made (Online, Retail Store, B2B Portal)"
         data_type: text
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Online', 'Retail Store', 'B2B Portal']
 
       - name: revenue_year
         description: "Year of the sales transaction (extracted from sale_date)"
         data_type: integer
+        tests:
+          - not_null
 
       - name: revenue_month
         description: "Month of the sales transaction (1-12, extracted from sale_date)"
         data_type: integer
+        tests:
+          - not_null
 
       - name: total_revenue
         description: "Total revenue (sum of line_total_usd) for the channel, year, and month combination. Excludes pending orders."
         data_type: numeric
+        tests:
+          - not_null

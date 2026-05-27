@@ -19,8 +19,6 @@ Unique record for each sales_id
 
 ## Filters
 
-## Business Rules
-
 ## Projected Columns
 
     - sale_id
@@ -39,9 +37,6 @@ Unique record for each sales_id
 - The status of the order cannot be blank or null
 - line_total_usd = (quantity * unit_price_usd) - discount_usd
 
-## Example Use Cases
-
-## Example Query
 
 ## Create a mart view from this model ?
 

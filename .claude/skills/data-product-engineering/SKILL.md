@@ -30,12 +30,12 @@ This skill includes detailed reference guides for specific techniques. Read the 
 | [references/model-macro-naming-conventions.md](references/model-macro-naming-conventions.md)| Model and Macro naming conventions |
 | [references/reading-upstream-dataproducts.md](references/reading-upstream-dataproducts.md) | Add upstream data product as sources when a data product reads from another data product |
 | [references/managing-packages.md](references/managing-packages.md) | Installing and managing dbt packages |
-
+| [references/reverse-engineer-mart-model-requirements.md](references/reverse-engineer-mart-model-requirements.md) | Reverse engineer mart model.md from staging model|
 
 
 **When users request new models:** Always ask "why a new model vs extending existing?" before proceeding. Legitimate reasons exist (different grain, precalculation for performance), but users often request new models out of habit. Your job is to surface the tradeoff, not blindly comply.
 
-## Model building guidelines
+## Common Model building guidelines
 
 - Common guidelines for model building
   - Refer to **`models/docs/staging/<model>.md`** or **`models/docs/marts/<model>.md`** (same basename as the `.sql` file) for business requirements.
@@ -100,7 +100,6 @@ This skill includes detailed reference guides for specific techniques. Read the 
     ```
   - Choose the value for "quote_columns" and "delimiter" based on the seed file in the seeds/ folder
 
-
 - Before modifying or updating EXISTING models, read their existing YAML doc and **`models/docs/<layer>/<model>.md`**:
   - Find the model's YAML file (can be any `.yml` or `.yaml` file in the models directory, but normally colocated with the SQL file)
   - Check the model's `description` to understand its purpose
@@ -113,7 +112,24 @@ This skill includes detailed reference guides for specific techniques. Read the 
   - This context prevents misusing columns or duplicating existing logic
   - If the model is created from another model, create the model.yml. Use the best suited data type which aligns with the dependent models and the target database.
 
-  
+- Reverse engineer mart model.md from staging model.md
+  - If the ask is to create a mart model from the staging model then follow the steps
+    1. Use the skill reference references/write-mart-model-requirements.md](references/writing-mart-model-requirements.md) to create the mart model.md
+    2. Create the mart model.sql and model.yml based on the user provided requirement
+
+
+## Model building guidelines for marts
+
+- Mart models should read from staging models using `{{ ref }}`
+- Mart models should be materialised as views to ensure the consumer gets maximum througput
+- These models should not have complex transformations. All transformations should be done in the staging layer
+
+## Macro writing guidelines
+
+- When using a date column from the database in any conditional operation with a date string,  always convert the date string to date datatype
+- If there is a variable that is hardcoded, consider using a set variables within a macro using the Jinja {% set %} statement. 
+
+
 # Get Historical Context
 
 Understanding how a dbt model has changed over time is crucial for making informed modifications or troubleshooting. For each dbt model `.md` file, you can gather historical context using the following approach:
@@ -166,18 +182,6 @@ Understanding how a dbt model has changed over time is crucial for making inform
 
 This historical skill ensures that your model changes respect the context, avoid regressions, and support transparent communication with data stakeholders.
 
-
-
-## Model building guidelines for marts
-
-- Mart models should read from staging models using `{{ ref }}`
-- Mart models should be materialised as views to ensure the consumer gets maximum througput
-- These models should not have complex transformations. All transformations should be done in the staging layer
-
-## Macro writing guidelines
-
-- When using a date column from the database in any conditional operation with a date string,  always convert the date string to date datatype
-- If there is a variable that is hardcoded, consider using a set variables within a macro using the Jinja {% set %} statement. 
  
 
 ## You must look at the data to be able to correctly model the data
