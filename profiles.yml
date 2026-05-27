@@ -22,10 +22,10 @@ sales_data_product:
       threads: 4
     supabase:
       type: postgres
-      host: "aws-1-ap-southeast-1.pooler.supabase.com"
+      host: "{{ env_var('POSTGRES_HOST') }}"
       port: 5432
-      user: "postgres.fizhqhsmhiusvmefoejo"
-      password: 'Developer!12345$$'
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
       dbname: "postgres"
       schema: "public"
       threads: 4
