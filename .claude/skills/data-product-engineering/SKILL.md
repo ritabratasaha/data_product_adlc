@@ -74,12 +74,32 @@ This skill includes detailed reference guides for specific techniques. Read the 
       ```
   - Conform to the existing style of a project (medallion layers, stage/intermediate/mart, etc)
   - Before adding a new model or column, always be sure that the same logic isn't already defined elsewhere that can be used.
+  - Do not add new derived columns if it is not asked explicitly in the model.md file
   
-- Building NEW model, read **`models/docs/<layer>/<model>.md`** to understand:
+- Building NEW model from dependent model, read **`docs/<layer>/<model>.md`** to understand:
   - Functional / Business requirements
   - Once you have understood the requirment and the user has approved the plan, create the model.sql and model.yml file
+  - Choice of data type in the model.yml file should be in line with the source model 
   - Enable contract = true for all yml files
   - Add description of the columns to the best of you knowledge and let the developer validate the column descriptions 
+  - If the model is created from another model, create the model.yml. Use the best suited data type which aligns with the dependent models and the target database.
+
+
+- Building NEW model from seeds, read **`docs/seeds/<filename>.md`** to understand:
+  - If the model is created from the seeds file create the properties.yml if it does not exit. 
+  - Add the details of the source file in the properties.yml file. 
+  - Use the best suited data type from the file based on the target database
+  - Here is a sample properties.yml
+    ```yml
+      seeds:
+        - name: [<seed-name>]
+          config:
+            quote_columns: true | false
+            column_types: {column_name: datatype}
+            delimiter: <string>
+    ```
+  - Choose the value for "quote_columns" and "delimiter" based on the seed file in the seeds/ folder
+
 
 - Before modifying or updating EXISTING models, read their existing YAML doc and **`models/docs/<layer>/<model>.md`**:
   - Find the model's YAML file (can be any `.yml` or `.yaml` file in the models directory, but normally colocated with the SQL file)
@@ -91,6 +111,7 @@ This skill includes detailed reference guides for specific techniques. Read the 
   - Suggest changes based on the most recent enhancement requirements.
   - Once user has approved the plan, update the model.sql and model.yml file
   - This context prevents misusing columns or duplicating existing logic
+  - If the model is created from another model, create the model.yml. Use the best suited data type which aligns with the dependent models and the target database.
 
   
 # Get Historical Context

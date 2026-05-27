@@ -8,8 +8,7 @@ This is a dbt (data build tool) project for the Sales data product, running on P
 
 **Key Facts:**
 
-- Target database: `sales_data_product` on local PostgreSQL
-- Development environment: Local PostgreSQL database (localhost:5432)
+- Target database: `postgres` on local PostgreSQL
 - Main schemas: `public` (default PostgreSQL schema)
 - Data sources: CSV seed files
 
@@ -23,7 +22,9 @@ Before executing any action, you MUST output "Pre-flight Check: SUCCESS" and fol
 *Failure to perform these steps before coding will be considered a protocol violation.*
 
 ##  MANDATORY POST-FLIGHT CHECK
-1. Execute the evals and share the results
+1. Execute the evals script under .claude/skills/data-product-engineering/evals/run_evals.py and share the results.
+2. Once the model is created run `dbt compile` to test if the model is syntactically correct
+3. Post compilation run `dbt show --select <model_name> --target supabase` to view the first 5 rows of the model
 
 ### Project Organization
 
@@ -38,14 +39,11 @@ sales_data_product/
 │       └── *.yml                      # Model documentation & tests
 ├── docs/                               # Model requirements documentation
 │   ├── staging/                        # stg_<model>.md paired with models/staging/stg_*.sql
-│   │   ├── stg_customer_sales.md
-│   │   └── stg_monthly_channel_revenue.md
 │   └── marts/                          # <model>.md paired with models/marts/*.sql
+|   └── seeds/                          # 
 ├── macros/
 │   └── *.sql                          # Custom dbt macros (currently empty)
 ├── seeds/
-│   ├── customer_sales.csv             # Customer sales transactions
-│   └── products.csv                   # Product information
 ├── tests/                              # Custom data tests
 ├── dbt_project.yml                     # Project configuration
 └── profiles.yml                        # PostgreSQL connection profile
@@ -72,6 +70,7 @@ CSV files containing source data that are loaded into the database via `dbt seed
 - Transforms seed data into clean, usable models
 - Prefix: `stg_<entity_name>`
 
+
 #### Marts Layer (`models/marts/`)
 **Purpose**: Final output models for downstream consumption
 **Materialization**: Views or tables as needed
@@ -81,13 +80,14 @@ CSV files containing source data that are loaded into the database via `dbt seed
 - May reference staging models or add additional aggregations
 - Can include business logic for specific use cases
 - Stable interface for consumers
-- Naming: `<entity_name>`, `fct_<entity_name>` (facts), or `dim_<entity_name>` (dimensions)
+- Naming: `<entity_name>` from the model.md
+
 
 ### Model Naming Convention
 
 - **Staging**: `stg_<entity_name>`
-- **Marts**: `<entity_name>` or `fct_<entity_name>` for fact tables, `dim_<entity_name>` for dimension tables
-- **Macros**: `<action>_<object>`
+- **Marts**: `<entity_name>` from the `<requirement>.md`  
+- **Macros**: `<entity_name>` from the `<requirement>.md` 
 
 ### Custom Macros
 Located in `macros/`:
@@ -116,38 +116,38 @@ These markdown files document:
 ### Loading Seed Data
 ```bash
 # Load all seed files into the database
-dbt seed
+dbt seed --full-refresh --target supabase
 
 # Load specific seed file
-dbt seed --select customer_sales
+dbt seed --select customer_sales --target supabase
 ```
 
 ### Running dbt
 ```bash
 # Run all models
-dbt run
+dbt run --target supabase
 
 # Run specific model
-dbt run --select stg_customer_sales
+dbt run --select stg_customer_sales --target supabase
 
 # Run models and downstream dependencies
-dbt run --select stg_customer_sales+
+dbt run --select stg_customer_sales+ --target supabase
 
 # Run models in a specific folder
-dbt run --select staging
-dbt run --select marts
+dbt run --select staging --target supabase
+dbt run --select marts --target supabase
 ```
 
 ### Testing
 ```bash
 # Run all tests
-dbt test
+dbt test --target supabase
 
 # Run tests for specific model
-dbt test --select stg_customer_sales
+dbt test --select stg_customer_sales --target supabase
 
 # Run tests for a folder
-dbt test --select staging
+dbt test --select staging --target supabase
 ```
 
 ### Documentation
@@ -165,28 +165,12 @@ dbt docs serve
 dbt compile
 
 # Show compiled SQL for a model
-dbt show --select stg_customer_sales
-
-# Clean target directory
-dbt clean
+dbt show --select stg_customer_sales --target supabase
 
 # Debug connection
-dbt debug
+dbt debug --target supabase
 ```
 
-## PostgreSQL Profile
-
-Configured in `profiles.yml`:
-
-**Target: local**
-- Type: `postgres`
-- Host: `localhost`
-- Port: `5432`
-- Database: `sales_data_product`
-- Schema: `public`
-- Threads: `4`
-
-To use this profile, ensure PostgreSQL is running locally with appropriate credentials configured in `profiles.yml`.
 
 ## Common Patterns
 
@@ -332,25 +316,7 @@ columns:
           values: ['pending', 'completed', 'cancelled']
 ```
 
-## Troubleshooting
 
-### Database Connection Issues
-```bash
-# Test connection
-dbt debug
-
-# Check if PostgreSQL is running
-psql -h localhost -U developer -d sales_data_product
-```
-
-### Model Errors
-```bash
-# Compile to see generated SQL
-dbt compile --select model_name
-
-# Run with debug logging
-dbt --debug run --select model_name
-```
 
 ## Code Ownership
 

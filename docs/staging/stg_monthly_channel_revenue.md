@@ -16,7 +16,7 @@ This model reads the data from stg_customer_sales.
     
 
 ## Grain
-Unique record for each sales_channel
+Unique record for each sales_channel , year and month
 
 ## Join Logic
 
@@ -48,8 +48,10 @@ Unique record for each sales_channel
 
 ## Example Query
 
-## Do you want to create a view in marts (presentation layer) ?
+## Create a mart view from this model ?
 
-Please a view in marts based on this staging model.
+Yes. Create a mart view in models/marts for this model. 
+This will be the presentation layer for the data product consumers
+
 
 

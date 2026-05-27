@@ -1,70 +1,60 @@
-#!/usr/bin/env python3
-"""Load evals.json, run each eval in order, print a results table."""
-
 import json
-import re
+import subprocess
 import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-while not (ROOT / "dbt_project.yml").is_file():
-    ROOT = ROOT.parent
+def run_all_evals(json_path):
+    try:
+        # 1. Load the evals JSON file
+        with open(json_path, 'r') as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"❌ Could not read or parse {json_path}: {e}")
+        return
 
-evals = json.loads((Path(__file__).parent / "evals.json").read_text())["evals"]
-models_dir = ROOT / "models"
-rows = []
+    skill_name = data.get("skill_name", "Unknown Skill")
+    eval_cases = data.get("evals", [])
+    
+    print("=" * 60)
+    print(f"🎯 Target Skill: {skill_name}")
+    print(f"📋 Found {len(eval_cases)} evaluation tests to run.")
+    print("=" * 60 + "\n")
 
-for ev in evals:
-    ok = True
+    # 2. Iterate through each eval block in the JSON file
+    for case in eval_cases:
+        eval_id = case.get("id")
+        name = case.get("name")
+        prompt_list = case.get("prompt", [])
+        
+        # 3. Combine the prompt array into a clean block of multi-line text
+        compiled_prompt = "\n".join(prompt_list)
+        
+        print(f"🔄 Running Test [{eval_id}]: {name}")
+        print("🤖 Claude is scanning your workspace files...")
+        print("-" * 60)
+        
+        try:
+            # 4. Fire the prompt to the Claude CLI
+            result = subprocess.run(
+                ["claude", "-p", compiled_prompt],
+                capture_output=True,
+                text=True,
+                timeout=90  # Keeps the execution safe for large scans
+            )
+            
+            # 5. Output whatever Claude returns right onto the screen
+            print(result.stdout)
+            
+            if result.stderr:
+                print(f"⚠️ System Messages/Stderr:\n{result.stderr}")
 
-    if ev["name"] == "ref-vs-source-conventions":
-        for f in models_dir.rglob("*.sql") if models_dir.is_dir() else []:
-            for line in f.read_text().splitlines():
-                if re.search(r"\b(from|join)\s+", line, re.I) and "{{" not in line and "." in line:
-                    ok = False
+        except subprocess.TimeoutExpired:
+            print("⏳ Execution stopped: Test exceeded the 90-second limit.")
+        except Exception as e:
+            print(f"💥 Failed to execute this test: {e}")
+            
+        print("=" * 60 + "\n")
 
-    for rule in ev.get("assertions", []):
-        kind = rule.get("type")
-
-        if kind == "contains":
-            needle = rule["value"]
-            for f in models_dir.rglob("*.sql") if models_dir.is_dir() else []:
-                yml = f.with_suffix(".yml") if f.with_suffix(".yml").is_file() else f.with_suffix(".yaml")
-                if not yml.is_file() or needle not in yml.read_text():
-                    ok = False
-
-        elif kind == "max_lines":
-            limit = rule["value"]
-            for f in models_dir.rglob("*.sql") if models_dir.is_dir() else []:
-                if len(f.read_text().splitlines()) >= limit:
-                    ok = False
-
-        elif kind == "file_pair":
-            for f in models_dir.rglob("*.sql") if models_dir.is_dir() else []:
-                if not f.with_suffix(".yml").is_file() and not f.with_suffix(".yaml").is_file():
-                    ok = False
-
-        elif kind == "model_description":
-            for f in models_dir.rglob("*.sql") if models_dir.is_dir() else []:
-                layer = f.relative_to(models_dir).parts[0]
-                doc = ROOT / "docs" / layer / f"{f.stem}.md"
-                yml = f.with_suffix(".yml") if f.with_suffix(".yml").is_file() else f.with_suffix(".yaml")
-                if not doc.is_file() or not yml.is_file() or "description:" not in yml.read_text():
-                    ok = False
-            macros_dir = ROOT / "macros"
-            if macros_dir.is_dir():
-                for f in macros_dir.glob("*.sql"):
-                    if not (ROOT / "docs" / "macros" / f"{f.stem}.md").is_file():
-                        ok = False
-                    elif not f.read_text().lstrip().startswith("--"):
-                        ok = False
-
-    rows.append((ev["id"], ev["name"], "PASS" if ok else "FAIL"))
-
-print(f"\n{'ID':<4}  {'Eval':<42}  {'Result':<6}\n{'-' * 56}")
-for id_, name, result in rows:
-    print(f"{id_:<4}  {name:<42}  {result:<6}")
-
-passed = sum(r == "PASS" for _, _, r in rows)
-print(f"\n{passed}/{len(rows)} passed\n")
-sys.exit(0 if passed == len(rows) else 1)
+if __name__ == "__main__":
+    # Uses 'evals.json' by default, or you can pass a path: python run_all_evals.py alternative.json
+    target_file = sys.argv[1] if len(sys.argv) > 1 else ".claude/skills/data-product-engineering/evals/evals.json"
+    run_all_evals(target_file)
